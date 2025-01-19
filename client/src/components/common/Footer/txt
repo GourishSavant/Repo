@@ -1,0 +1,62 @@
+import React, { useState, useEffect } from 'react';
+
+const EnabledFeatures = () => {
+  const [features, setFeatures] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Simulate user role ID (e.g., from a JWT token or session)
+  const roleId = 1; // Example: Role ID from the session or JWT token
+
+  useEffect(() => {
+    const fetchEnabledFeatures = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/get-enabled-features/${roleId}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch enabled features');
+        }
+
+        const data = await response.json();
+        setFeatures(data.features);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEnabledFeatures();
+  }, [roleId]);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
+
+  return (
+    <div>
+      <h1>Enabled Features for Role</h1>
+      {features.length === 0 ? (
+        <p>No enabled features found for this role</p>
+      ) : (
+        features.map((feature) => (
+          <div key={feature.short_code}>
+            <h3>{feature.name} ({feature.short_code})</h3>
+            <ul>
+              <li>Can View: {feature.can_view ? 'Yes' : 'No'}</li>
+              <li>Can Add: {feature.can_add ? 'Yes' : 'No'}</li>
+              <li>Can Edit: {feature.can_edit ? 'Yes' : 'No'}</li>
+              <li>Can Delete: {feature.can_delete ? 'Yes' : 'No'}</li>
+            </ul>
+          </div>
+        ))
+      )}
+    </div>
+  );
+};
+
+export default EnabledFeatures;

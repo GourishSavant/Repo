@@ -1,0 +1,28 @@
+[
+    {
+      "admissionNo": "123",
+      "studentName": "John Doe",
+      "rollNo": "01",
+      "class": "Class 1",
+      "section": "A",
+      "fatherName": "Mr. Doe",
+      "dob": "2010-01-01",
+      "disableReason":"xyz",
+      "gender": "Male",
+      "category": "General",
+      "mobileNumber": "9876543210"
+    },
+    {
+      "admissionNo": "124",
+      "studentName": "Jane Smith",
+      "rollNo": "02",
+      "class": "Class 2",
+      "section": "B",
+      "fatherName": "Mr. Smith",
+      "dob": "2011-02-15",
+      "gender": "Female",
+      "category": "OBC",
+      "mobileNumber": "9876543211"
+    }
+  ]
+  
