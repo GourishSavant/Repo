@@ -37,9 +37,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchStaff } from '../../redux/slices/stafffSlice.jsx'; // Import the async thunk
 import { FaEye, FaPen } from 'react-icons/fa';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useSearchParams } from "react-router-dom";
 import { faList, faThList } from '@fortawesome/free-solid-svg-icons';
 import AdminSidebar from "../../components/admin/AdminSidebar.jsx";
 import { useParams } from 'react-router-dom'; // Import useParams hook
+import { useLocation } from "react-router-dom";
 import  fetchCategoryPermission  from '../../redux/slices/permissionSlice';
 import axiosApi from '../../api/axiosApi.jsx';
 const StaffManagement = () => {
@@ -48,17 +50,23 @@ const StaffManagement = () => {
   const [viewMode, setViewMode] = useState('card');
   const { category_name } = useParams(); // Get role_id and category_name from URL params
   const [canAdd, setCanAdd] = useState(0);
+  const [canView, setCanView] = useState(0);
    
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { data: staffData, loading } = useSelector((state) => state.staff);
+  const location = useLocation();
+  const submenuId = new URLSearchParams(location.search).get("submenu_id");
   // const { canAdd, loading: permissionLoading } = useSelector((state) => state.permissions);
   const auth = useSelector((state) => state.auth);
 
-
+console.log(submenuId);
 const role_id = localStorage.getItem("role_id"); 
+console.log(role_id);
 
+const currentUserEmpId = auth.staff.staff_id;
+  const catgry_name = "Can see other users profile";
   // useEffect(() => {
   //   dispatch(fetchStaff());
   // }, [dispatch]);
@@ -71,16 +79,22 @@ const role_id = localStorage.getItem("role_id");
 
   useEffect(() => {
     // Fetch the canAdd permission based on role_id and category_name
-    fetchPermission(role_id, category_name);
-  }, [role_id, category_name]); // Re-run when role_id or category_name changes
+    fetchPermission(role_id, submenuId);
+  }, [role_id, submenuId]); // Re-run when role_id or category_name changes
 
-  const fetchPermission = async (role_id, category_name) => {
+  useEffect(() => {
+    // Fetch the canAdd permission based on role_id and category_name
+    fetchProfileViewPermission(role_id, catgry_name);
+  }, [role_id, catgry_name]); // Re-run when role_id or category_name changes
+
+  console.log(role,"i am role")
+  const fetchPermission = async (role_id, submenuId) => {
     // Example API call to get canAdd permission
     try {
    
-      category_name = "staff";
-      const response = await axiosApi.get(`/auth/permission-category/${category_name}/id/${role_id}`);
-      console.log(response ,"hhhh")
+      // category_name = "staff";
+      const response = await axiosApi.get(`/auth/permission-category/${submenuId}/id/${role_id}`);
+      console.log(role_id ,"hhhh")
       console.log(response.data.canAdd ,"kkk")
       if (response.data.success) {
         setCanAdd(response.data.canAdd); // Set the canAdd permission from the response
@@ -93,6 +107,27 @@ const role_id = localStorage.getItem("role_id");
     }
   };
 
+
+  const fetchProfileViewPermission = async (role_id, catgry_name) => {
+    // Example API call to get canAdd permission
+    try {
+   
+      // category_name = "staff";
+      const response = await axiosApi.get(`/auth/getCanViewforOthers/${catgry_name}/id/${role_id}`);
+      console.log(response.data.canView ,"canView")
+      if (response.data.success) {
+        setCanView(response.data.canView); // Set the canView permission from the response
+      } else {
+        setCanView(0); // Default to 0 if no permission is found
+      }
+    } catch (error) {
+      console.error('Error fetching permission:', error);
+      setCanView(0); // Default to 0 on error
+    }
+  };
+
+
+ 
   // //Fetch category permission (canAdd)
   // useEffect(() => {
   //   dispatch(fetchCategoryPermission({ role_id, name: category_name }));
@@ -171,6 +206,7 @@ const role_id = localStorage.getItem("role_id");
     + Add Staff
   </button>
 )}
+
 {/*           
                     <div className="flex items-center gap-4">
             {can_add === 1 && ( // Check if can_add permission is 1
@@ -203,6 +239,7 @@ const role_id = localStorage.getItem("role_id");
 </div>
 
 {/* Display Staff */}
+{/* Display Staff */}
 <div>
   {viewMode === 'card' ? (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -217,68 +254,78 @@ const role_id = localStorage.getItem("role_id");
           <p className="text-sm text-center">Phone: {staff.phone_no}</p>
 
           <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <button
-              className="flex items-center justify-center w-10 h-10 bg-blue-500 text-white rounded-full mx-2 hover:bg-blue-600"
-              onClick={() => navigate(`/admin/staff/${staff.staff_emp_id}`)} // Navigate to profile
-            >
-              <FaEye />
-            </button>
+            {/* Show "Eye View" button if user is superadmin or it's the logged-in user's profile */}
+            {(role === 'Super Admin' || staff.staff_id === currentUserEmpId || canView) && (
+              <button
+                className="flex items-center justify-center w-10 h-10 bg-blue-500 text-white rounded-full mx-2 hover:bg-blue-600"
+                onClick={() => navigate(`/admin/staff/${staff.staff_emp_id}`)} // Navigate to profile
+              >
+                <FaEye />
+              </button>
+            )}
+             {(role === 'Super Admin' || staff.staff_id === currentUserEmpId || canView) && (
             <button
               className="flex items-center justify-center w-10 h-10 bg-green-500 text-white rounded-full mx-2 hover:bg-green-600"
               onClick={() => navigate(`/admin/staff/${staff.id}/edit`)} // Navigate to edit
             >
               <FaPen />
             </button>
+             )}
           </div>
         </div>
       ))}
     </div>
   ) : (
-              <div className="overflow-x-auto">
-                <table className="min-w-full border-collapse">
-                  <thead>
-                    <tr>
-                      <th className="px-4 py-2 border-b">Staff ID</th>
-                      <th className="px-4 py-2 border-b">Name</th>
-                      <th className="px-4 py-2 border-b">Role</th>
-                      <th className="px-4 py-2 border-b">Department</th>
-                      <th className="px-4 py-2 border-b">Designation</th>
-                      <th className="px-4 py-2 border-b">Mobile Number</th>
-                      <th className="px-4 py-2 border-b">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {staffData.map((staff) => (
-                      <tr key={staff.id}>
-                        <td className="px-4 py-2 border-b">{staff.staff_id}</td> {/* Ensure correct field */}
-                        <td className="px-4 py-2 border-b">{staff.first_name} {staff.last_name}</td> {/* Full name */}
-                        <td className="px-4 py-2 border-b">{staff.role}</td>
-                        <td className="px-4 py-2 border-b">{staff.department}</td>
-                        <td className="px-4 py-2 border-b">{staff.designation}</td>
-                        <td className="px-4 py-2 border-b">{staff.phone_no}</td> {/* Ensure correct field */}
-                        <td className="px-4 py-2 border-b flex gap-2">
-                          <button
-                            className="flex items-center justify-center w-8 h-8 bg-blue-500 text-white rounded-full hover:bg-blue-600"
-                            onClick={() => navigate(`/admin/staff/${staff.staff_emp_id}`)} // Navigate to profile
-                          >
-                            <FaEye />
-                          </button>
-                          <button
-                            className="flex items-center justify-center w-8 h-8 bg-green-500 text-white rounded-full hover:bg-green-600"
-                            onClick={() => navigate(`/admin/staff/${staff.id}/edit`)} // Navigate to edit
-                          >
-                            <FaPen />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-      </div>
+    <div className="overflow-x-auto">
+      <table className="min-w-full border-collapse">
+        <thead>
+          <tr>
+            <th className="px-4 py-2 border-b">Staff ID</th>
+            <th className="px-4 py-2 border-b">Name</th>
+            <th className="px-4 py-2 border-b">Role</th>
+            <th className="px-4 py-2 border-b">Department</th>
+            <th className="px-4 py-2 border-b">Designation</th>
+            <th className="px-4 py-2 border-b">Mobile Number</th>
+            <th className="px-4 py-2 border-b">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {staffData.map((staff) => (
+            <tr key={staff.id}>
+              <td className="px-4 py-2 border-b">{staff.staff_id}</td>
+              <td className="px-4 py-2 border-b">{staff.first_name} {staff.last_name}</td>
+              <td className="px-4 py-2 border-b">{staff.role}</td>
+              <td className="px-4 py-2 border-b">{staff.department}</td>
+              <td className="px-4 py-2 border-b">{staff.designation}</td>
+              <td className="px-4 py-2 border-b">{staff.phone_no}</td>
+              <td className="px-4 py-2 border-b flex gap-2">
+                {/* Show "Eye View" button if user is superadmin or it's the logged-in user's profile */}
+                {(role === 'Super Admin' || staff.staff_id === currentUserEmpId || canView) && (
+                  <button
+                    className="flex items-center justify-center w-8 h-8 bg-blue-500 text-white rounded-full hover:bg-blue-600"
+                    onClick={() => navigate(`/admin/staff/${staff.staff_emp_id}`)} // Navigate to profile
+                  >
+                    <FaEye />
+                  </button>
+                )}
+                 {(role === 'Super Admin' || staff.staff_id === currentUserEmpId || canView) && (
+                <button
+                  className="flex items-center justify-center w-8 h-8 bg-green-500 text-white rounded-full hover:bg-green-600"
+                  onClick={() => navigate(`/admin/staff/${staff.id}/edit`)} // Navigate to edit
+                >
+                  <FaPen />
+                </button>
+                 )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
+  )}
+</div>
+</div>
+</div>
     
   );
 };

@@ -740,9 +740,9 @@ function getCategoryIcon(shortCode) {
           {visibleGroups[menu.sidebar_menu_id] && (
             <ul className="pl-6 mt-2 space-y-1">
               {menu.submenus.map((submenu) => (
-                <li key={submenu.submenu_id} className="py-1">
+                <li key={submenu.sidebar_sub_menu_id} className="py-1">
                   <Link
-                    to={submenu.url}
+                    to={`${submenu.url}?submenu_id=${submenu.permission_category_id}`}
                     className={`block px-2 py-1 rounded hover:bg-gray-700 ${
                       location.pathname === submenu.url ? "bg-gray-700" : ""
                     }`}

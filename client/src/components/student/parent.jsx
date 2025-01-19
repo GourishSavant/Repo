@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Sidebar from "./AdminSidebar";
+import Sidebar from "./studentsidebar";
 
 import Modules from "../../pages/admin/modules"; // Make sure the import path is correct
 

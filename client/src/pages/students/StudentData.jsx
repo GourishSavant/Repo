@@ -1,32 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AdminPanel from './Dashboard';
-// import StudentPanel from '../students/StudentDashboard'
+//import AdminPanel from './Dashboard';
+import StudentPanel from '../students/StudentDashboard'
 
-const LoginDash = () => {
+const StudentData= () => {
   const [role, setRole] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     // Retrieve role from localStorage
-    const staff = JSON.parse(localStorage.getItem('staff'));
-    if (staff && staff.role) {
-      setRole(staff.role);
-    } else {
-      // Redirect to login if no role is found
-      navigate('/');
-    }
+    // const staff = JSON.parse(localStorage.getItem(role_id));
+    // if(staff==1){
+      setRole("student");
+    // }
+    // if (staff && staff.role) {
+    //   setRole(staff.role);
+    // } else {
+    //   // Redirect to login if no role is found
+    //   navigate('/');
+    // }
   }, [navigate]);
 
   if (!role) {
     return <p>Loading...</p>;
   }
-
+  console.log(role)
   // Render the panel based on the role
   switch (role) {
-    case 'Super Admin':
-    case 'Admin':
-      return <AdminPanel />;
+    // case 'Super Admin':
+    // case 'Admin':
+    //   return <AdminPanel />;
     case 'student':
       return <StudentPanel />;
     case 'Teacher':
@@ -39,8 +42,8 @@ const LoginDash = () => {
 };
 
 //const AdminPanel = () => <h2>Admin Dashboard</h2>;
-const StudentPanel = () => <h2>Student Dashboard</h2>;
+// const StudentPanel = () => <h2>Student Dashboard</h2>;
 const TeacherPanel = () => <h2>Teacher Dashboard</h2>;
 const ParentPanel = () => <h2>Parent Dashboard</h2>;
 
-export default LoginDash;
+export default StudentData;

@@ -1,13 +1,13 @@
 import { FaChartLine, FaRegClipboard, FaCalendarAlt } from "react-icons/fa";
-import StudentNavbar from "../../components/admin/studentnavbar";
-import StudentSidebar from "../../components/admin/studentsidebar";
+import StudentNavbar from "../../components/student/studentnavbar";
+import StudentSidebar from "../../components/student/studentsidebar";
 // import StudentLayout from "../../components/admin/studentLayout";
 const StudentDashboard = () => {
   return (
     <div className="flex-grow">
       {/* Welcome Section */}
-      <StudentNavbar/>
-    <StudentSidebar/>
+      {/* <StudentNavbar/>
+    <StudentSidebar/> */}
     {/* <StudentLayout/> */}
       <div className="bg-white shadow p-4 rounded mb-6 flex justify-between items-center">
         <div className="flex items-center gap-4">
@@ -73,6 +73,8 @@ const StudentDashboard = () => {
         </div>
       </div>
     </div>
+    // <>
+    // </>
   );
 };
 export default StudentDashboard;

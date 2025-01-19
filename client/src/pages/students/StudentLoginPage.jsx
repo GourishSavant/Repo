@@ -2,21 +2,26 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loginStudent } from "../../redux/slices/studentauthSlice.jsx";
+
 const StudentLoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { isLoading, error } = useSelector((state) => state.studentAuth);
+
+
   const handleLogin = async (e) => {
     e.preventDefault();
     const result = await dispatch(
       loginStudent({ username, password })
     );
     if (result.meta.requestStatus === "fulfilled") {
-      navigate("/student/dashboard");
+      console.log("jjh")
+      navigate("/user/dashboard");
     }
   };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white p-6 rounded-lg shadow-md w-96">

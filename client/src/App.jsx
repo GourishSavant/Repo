@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Dashboard from './pages/admin/Dashboard';
 import AdminLayout from './components/admin/AdminLayout.jsx'
 import AdminLoginPage  from './pages/admin/adminloginpage'
-import StudentLayout from './components/admin/studentLayout.jsx'
+import StudentLayout from './components/student/studentLayout.jsx'
 
 
 
@@ -172,6 +172,7 @@ import EditStudent from './pages/admin/editstudent.jsx'
 import FeeDetails from './pages/admin/addfee.jsx'
 import StudentLoginPage from './pages/students/StudentLoginPage'
 import StudentDashboard from './pages/students/StudentDashboard.jsx';
+import StudentDash from './pages/students/StudentData.jsx';
 
 const App = () => {
   return (
@@ -184,7 +185,7 @@ const App = () => {
           {/* Login Route */}
          <Route path="/admin/login" element={<AdminLoginPage />} />
          <Route path="/user/login" element={<StudentLoginPage />} />
-         <Route path="/student/dashboard" element={<StudentDashboard />}/>
+        
 
 
 {/* Admin Layout with nested routes */}
@@ -195,7 +196,7 @@ const App = () => {
             /> */}
             {/* Protected Route */}
             <Route path="/admin" element={<AdminLayout />}>
-            {/* <Route path="/student" element={<StudentLayout />}> */}
+            {/* <Route path="/user" element={<StudentLayout />}> */}
 
 
 
@@ -361,7 +362,7 @@ const App = () => {
           <Route path="news" element={< News/>} />
           <Route path="AddHomeWork" element={< AddHomework/>} />
           <Route path="dailyassignment" element={<DailyAssignment/>} />
-          <Route path="student" element={<StudentLayout />}>
+          <Route path="user" element={<StudentLayout />}>
 
 
 
@@ -374,6 +375,10 @@ const App = () => {
           </Route>
           {/* Redirecting to home if no route matches */}
           {/* <Route path="*" element={<Navigate to="/" />} /> */}
+          
+          <Route path="/user" element = {<StudentLayout/>}>
+              <Route path="dashboard" element={<StudentDash />}/>
+          </Route>
 
         </Routes>
       </Router>

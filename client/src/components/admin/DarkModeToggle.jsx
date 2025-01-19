@@ -28,7 +28,7 @@ const AppLayout = ({ handleLogout, children }) => {
       {/* Main Content */}
       <div className="flex flex-col min-h-screen">
         <Navbar toggleSidebar={toggleSidebar} handleLogout={handleLogout} toggleDarkMode={toggleDarkMode} isDarkMode={isDarkMode} />
-
+        
         {/* Dashboard Content */}
         <main className="flex-1 p-4">
           {children} {/* The dynamic content passed as children */}
